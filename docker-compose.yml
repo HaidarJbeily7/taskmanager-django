@@ -1,0 +1,36 @@
+version: "3.8"
+
+services:
+  mysql-db:
+    image: mysql/mysql-server:5.7
+    environment:
+      MYSQL_DATABASE: 'taskmanager_db'
+      MYSQL_ROOT_PASSWORD: 'secret-pw'
+      MYSQL_ROOT_HOST: '%'
+    ports:
+      - '3306:3306'
+    expose:
+      - '3306'
+    volumes:
+      - './.mysql-data/db:/var/lib/mysql'
+      - './initial.sql:/docker-entrypoint-initdb.d/initial.sql'
+
+  backend:
+    build:
+      context: .
+      dockerfile: docker/django/Dockerfile
+    env_file: .env
+    restart: always
+    volumes:
+      - .:/app/
+      - /tmp/app/mysqld:/run/mysqld
+    depends_on:
+      - mysql-db
+    expose:
+      - 8000
+    ports:
+      - "8000:8000"
+    command: python manage.py runserver 0.0.0.0:8000
+
+volumes:
+  mysql_data:

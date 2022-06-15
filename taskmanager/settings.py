@@ -19,7 +19,7 @@ SECRET_KEY = env('SECRET_KEY')
 
 
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['*']
 
 
 # Application definition
@@ -31,6 +31,12 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'rest_framework',
+    'location_field.apps.DefaultConfig',
+
+    'core',
+    'listing',
 ]
 
 MIDDLEWARE = [
@@ -118,3 +124,7 @@ STATIC_URL = '/static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+AUTH_USER_MODEL = 'core.User'
+
