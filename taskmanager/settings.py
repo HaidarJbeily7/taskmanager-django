@@ -33,7 +33,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     
     'rest_framework',
-    'location_field.apps.DefaultConfig',
+    'rest_framework.authtoken',
+    'djoser',
 
     'core',
     'listing',
@@ -124,6 +125,26 @@ STATIC_URL = '/static/'
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework.authentication.TokenAuthentication',
+    ),
+}
+
+SIMPLE_JWT = {
+   'AUTH_HEADER_TYPES': ('JWT',),
+}
+
+DJOSER = {
+    'SERIALIZERS': {
+         'user_create': 'core.serializer.UserRegistrationSerializer'
+    }
+}
+
+MEDIA_ROOT = 'storage'
+MEDIA_URL = '/photo/'
 
 
 AUTH_USER_MODEL = 'core.User'
