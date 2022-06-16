@@ -1,5 +1,5 @@
-
 from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
 from .models import List, Task
 
 
@@ -36,3 +36,39 @@ class ListSerializer(serializers.ModelSerializer):
         model = List
         fields = ['id', 'title', 'description', 'percentage_incomplete_to_complete_tasks']
 
+
+class TaskSerializer(serializers.ModelSerializer):
+
+    list_name = serializers.SerializerMethodField()
+
+    def get_list_name(self, obj):
+        return obj.list.title
+
+    def validate_list(self, list):
+        user_id = self.context['user'].id
+        if list.user.id != user_id:
+            raise ValidationError('invalid data', 400)
+        return list
+    
+    def validate_parent_task(self, parent_task):
+        if parent_task is not None:
+            raise ValidationError('you cannot set parent task for a task', 400)
+        return parent_task
+
+
+    class Meta:
+        model = Task
+        fields = '__all__'
+
+
+class CreateSubTaskSerializer(serializers.ModelSerializer):
+
+
+    def validate_parent_task(self, parent_task):
+        if parent_task.id == self.context['task'].id:
+            raise ValidationError('parent task id cannot be the same with task id', 400)
+        return parent_task
+
+    class Meta:
+        model = Task
+        fields = '__all__'
