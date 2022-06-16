@@ -5,7 +5,10 @@ from .models import List, Task
 
 class AccessListTasksPermission(BasePermission):
     def has_permission(self, request, view):
-        list = List.objects.get(id=view.kwargs['list_pk'])
+        try:
+            list = List.objects.get(id=view.kwargs['list_pk'])
+        except List.DoesNotExist:
+            raise NotFound()
         return request.user.id == list.user_id
 
 

@@ -62,13 +62,21 @@ class TaskSerializer(serializers.ModelSerializer):
 
 
 class CreateSubTaskSerializer(serializers.ModelSerializer):
+    
+    def validate_list(self, list):
+        req_list = self.context['task'].list
+        if list.id != req_list.id:
+            raise ValidationError('Invalid Data!', 400)
+        return list
 
-
-    def validate_parent_task(self, parent_task):
-        if parent_task.id == self.context['task'].id:
-            raise ValidationError('parent task id cannot be the same with task id', 400)
-        return parent_task
+    def create(self, validated_data):
+        subtask = Task.objects.create(
+            parent_task=self.context['task'],
+            **validated_data
+        )
+        return subtask
 
     class Meta:
         model = Task
-        fields = '__all__'
+        fields = ['id', 'title', 'list', 'is_completed', 'due_datetime', 'note', 'location', 'priority']
+ 

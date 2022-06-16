@@ -79,7 +79,6 @@ class TaskViewSet(ModelViewSet, BaseDestroyModelMixin):
             return Response(serializer.data, 200)
 
         if request.method =='POST':
-            request.data.set('list', task.list)
             serializer = CreateSubTaskSerializer(data=request.data, context={'task':task})
             serializer.is_valid(raise_exception=True)
             self.perform_create(serializer)
